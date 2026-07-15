@@ -56,17 +56,30 @@ period, what share finished automatically.
 ```sql
 -- Reference query: monthly STP Rate
 SELECT
+    -- Group transactions by the month they arrived
     DATE_TRUNC('month', ingested_at)  AS month,
+
+    -- Everything that finished processing (any final status)
     COUNT(*)                          AS resolved_transactions,
+
+    -- Count only straight-through rows: CASE returns 1 for 'auto',
+    -- 0 otherwise, so the SUM is the number of auto transactions
     SUM(CASE WHEN processing_status = 'auto'
              THEN 1 ELSE 0 END)       AS auto_transactions,
+
+    -- Share of automatic processing, one decimal place.
+    -- 100.0 (not 100) forces decimal division
     ROUND(100.0 * SUM(CASE WHEN processing_status = 'auto'
                            THEN 1 ELSE 0 END)
                / COUNT(*), 1)         AS stp_rate
+
 FROM marts.fct_transactions
+
+-- Pending transactions have no outcome yet — excluded until resolved
 WHERE processing_status <> 'pending'
-GROUP BY 1
-ORDER BY 1 DESC;
+
+GROUP BY 1       -- group by the first column (month)
+ORDER BY 1 DESC; -- newest month first
 ```
 
 ## Dimensions

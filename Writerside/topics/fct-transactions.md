@@ -87,25 +87,27 @@ To request it, follow
 ```sql
 -- Daily processing volume by source, last 30 days
 SELECT
-    booking_date,
-    source_system,
-    COUNT(*) AS transactions
+  booking_date,
+  source_system,
+  COUNT(*) AS transactions
 FROM marts.fct_transactions
-WHERE booking_date >= CURRENT_DATE - 30
-GROUP BY 1, 2
+WHERE booking_date >= CURRENT_DATE - 30   -- rolling 30-day window
+GROUP BY 1, 2                             -- per day, per source
 ORDER BY 1 DESC, 2;
 ```
 
 ```sql
 -- Current review queue by source system
 SELECT
-    source_system,
-    COUNT(*)                          AS pending_transactions,
-    MIN(ingested_at)                  AS oldest_pending_since
+  source_system,
+  COUNT(*)         AS pending_transactions,
+  -- Arrival time of the oldest unresolved transaction:
+  -- shows how long the queue has been building up
+  MIN(ingested_at) AS oldest_pending_since
 FROM marts.fct_transactions
 WHERE processing_status = 'pending'
 GROUP BY 1
-ORDER BY 2 DESC;
+ORDER BY 2 DESC;  -- biggest queue first
 ```
 
 ## Known issues

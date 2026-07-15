@@ -23,5 +23,5 @@ built and tested by GitHub Actions, deployed to GitHub Pages.
 
 ## Author
 
-Dmitrii Z. — senior technical writer.
+Dmitrii Zhukov, Senior technical writer.
 Portfolio: https://thenameisdmitry.github.io/KBDZ/

@@ -52,15 +52,26 @@ The metric is reported as two numbers, never one:
 ```sql
 -- Reference query: monthly processing latency, p50 and p95
 SELECT
-    DATE_TRUNC('month', ingested_at)     AS month,
+  DATE_TRUNC('month', ingested_at)     AS month,
+
+    -- Typical case: half of all transactions are faster than this.
+    -- DATEDIFF = minutes between arrival and warehouse availability
     ROUND(MEDIAN(
         DATEDIFF('minute', ingested_at, loaded_at)
     ), 1)                                AS latency_p50_min,
+
+    -- Slow tail: 95% of transactions are faster than this.
+    -- Reads as: sort all latencies, take the value at the 95% mark
     ROUND(PERCENTILE_CONT(0.95) WITHIN GROUP (
         ORDER BY DATEDIFF('minute', ingested_at, loaded_at)
     ), 1)                                AS latency_p95_min
+
 FROM marts.fct_transactions
+
+-- Only records that reached the warehouse have an end-to-end
+-- latency; rejected records never complete the journey
 WHERE processing_status IN ('auto', 'manual')
+
 GROUP BY 1
 ORDER BY 1 DESC;
 ```
