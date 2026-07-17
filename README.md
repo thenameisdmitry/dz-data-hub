@@ -1,12 +1,12 @@
-# DZ Data Hub
+# DZ Data Hub: a mock-up documentation portal.
 
 **Live site:** https://thenameisdmitry.github.io/dz-data-hub/
 
-A demo project created to showcase data documentation practices:
+This is a demo project created to demonstrate data documentation practices:
 an internal data documentation portal for a fictional fintech
 company that processes financial transactions for banks and
 investment firms. Metric definitions, a dataset catalog entry, and
-procedural guides — written in
+procedural guides are written in
 [JetBrains Writerside](https://www.jetbrains.com/writerside/),
 built and tested by GitHub Actions, deployed to GitHub Pages.
 
@@ -23,5 +23,5 @@ built and tested by GitHub Actions, deployed to GitHub Pages.
 
 ## Author
 
-Dmitrii Zhukov, Senior technical writer.
-Portfolio: https://thenameisdmitry.github.io/KBDZ/
+Dmitrii Zhukov, Senior Technical Writer.
+My Portfolio: https://thenameisdmitry.github.io/KBDZ/

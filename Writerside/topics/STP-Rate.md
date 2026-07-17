@@ -13,8 +13,8 @@
 </tldr>
 
 STP Rate measures the share of incoming transactions that flow through
-the DZ data pipeline fully automatically — ingested, validated, and
-loaded into the warehouse without manual intervention. It is the
+the DZ data pipeline fully automatically: ingested, validated, and
+loaded into the database without manual intervention. It is the
 primary health indicator of our data processing: a falling STP Rate
 means more records are failing validation or piling up in manual
 review queues.
@@ -22,16 +22,16 @@ review queues.
 ## Definition
 
 The percentage of transactions received in a period that reached the
-warehouse in `auto` status — meaning every pipeline stage (format
+database in `auto` status: meaning every pipeline stage (format
 validation, enrichment, deduplication, account matching) completed
 without human involvement.
 
 A transaction ends its pipeline journey in one of three final states:
 
-- **`auto`** — processed straight through. Counts toward STP.
-- **`manual`** — required an operator (unmatched account, failed
+- **`auto`**: processed straight through. Counts toward STP.
+- **`manual`**: required an operator (unmatched account, failed
   enrichment) and was resolved by hand. Does not count.
-- **`rejected`** — failed validation terminally (malformed record,
+- **`rejected`**: failed validation terminally (malformed record,
   duplicate feed file). Does not count.
 
 > Transactions still sitting in the review queue have a `pending`
@@ -45,7 +45,7 @@ A transaction ends its pipeline journey in one of three final states:
 In business terms: of all transactions that finished processing in the
 period, what share finished automatically.
 
-- **Formula:** `auto_transactions / resolved_transactions × 100`
+- **Formula:** `auto_transactions / resolved_transactions x 100`
 - **Grain:** one transaction (`transaction_id`), aggregated monthly
   by default.
 - **Included:** all transactions with a final status
@@ -75,7 +75,7 @@ SELECT
 
 FROM marts.fct_transactions
 
--- Pending transactions have no outcome yet — excluded until resolved
+-- Pending transactions have no outcome yet
 WHERE processing_status <> 'pending'
 
 GROUP BY 1       -- group by the first column (month)
@@ -100,15 +100,15 @@ historically show the lowest STP due to inconsistent file formats.
    payment gateway, custodian feeds) into the ingestion layer.
 2. The validation engine assigns each record its
    `processing_status` and writes the outcome to the staging area.
-3. The daily warehouse job loads resolved records into
+3. The daily database job loads resolved records into
    [fct_transactions](fct-transactions.md), the single source of
    truth for all processing metrics.
 4. The metric is visualized in Metabase
-   (`metabase.dz.internal/dashboard/12` — Data Operations overview).
+   (`metabase.dz.internal/dashboard/12` - Data Operations overview).
 
 ## Freshness and availability
 
-- **Update schedule:** the warehouse load runs daily at 03:00 UTC
+- **Update schedule:** the database load runs daily at 03:00 UTC
   (Airflow DAG `warehouse_daily`).
 - **Latency:** the dashboard reflects transactions resolved up to the
   previous midnight UTC.

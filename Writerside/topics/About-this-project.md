@@ -19,7 +19,7 @@ illustration purposes.
 
 - **Data documentation genres.** Metric documentation with honest
   caveats, a data catalog entry with schema and lineage, and a
-  procedural guide with governance context — the core content types
+  procedural guide with governance context: the core content types
   of an internal data portal.
 - **Template-driven consistency.** All metric pages follow a single
   [documented template](Metric-documentation-template.md), so readers
@@ -30,8 +30,8 @@ illustration purposes.
 
 ## Design decisions and trade-offs
 
-- **A domain I know deeply.** The fictional world — transaction
-  processing for banks and investment firms — mirrors my ~10 years of
+- **A domain I know deeply.** The fictional world (transaction
+  processing for banks and investment firms) shows my 10+ years of
   documentation work in fintech B2B SaaS. Believable documentation
   starts with domain understanding: the metrics, the statuses, and
   the caveats here are the kind that real data operations live with.
@@ -42,7 +42,7 @@ illustration purposes.
   status model is defined once and referenced everywhere.
 - **Internal links of the fictional company are not clickable.**
   Dashboards and channels (for example, `metabase.dz.internal`) are
-  formatted as code, not hyperlinks — a demo should not contain links
+  formatted as code, not hyperlinks. A demo should not contain links
   that lead nowhere.
 - **Caveats are a first-class section.** Every metric documents what
   can mislead a reader: pending backlogs distorting recent values,
@@ -50,7 +50,7 @@ illustration purposes.
   deflating a source's STP. In real data work, this section builds
   more trust than any other.
 - **CI tests the docs.** The pipeline runs the Writerside checker on
-  every push and fails the build on broken links or malformed markup —
+  every push and fails the build on broken links or malformed markup,
   a quality feedback loop borrowed from software engineering.
 
 ## About the author

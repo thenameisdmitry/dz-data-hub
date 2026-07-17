@@ -24,21 +24,21 @@ in each section with real content.
 ## Definition
 
 One or two sentences in plain language: what the metric measures
-and what business question it answers. Avoid formulas here — this
+and what business question it answers. Avoid formulas here: this
 section is for readers who may never look at SQL.
 
 ## Calculation
 
 The exact, unambiguous calculation logic:
 
-- **Formula** — expressed in business terms first, then in SQL.
-- **Grain** — the level at which the metric is calculated
+- **Formula**: expressed in business terms first, then in SQL.
+- **Grain**: the level at which the metric is calculated
   (per user, per account, per day).
-- **Filters** — what is included and excluded (test accounts,
+- **Filters**: what is included and excluded (test accounts,
   internal users, refunded orders).
 
 ```sql
--- Reference query. Keep it runnable against the warehouse.
+-- Reference query. Keep it runnable against the database.
 SELECT ...
 ```
 
@@ -53,20 +53,20 @@ List the dimensions by which the metric can be segmented.
 ## Data sources and lineage
 
 Where the numbers come from, step by step: source systems →
-warehouse tables → transformation models → dashboards. Link each
+database tables → transformation models → dashboards. Link each
 dataset to its catalog entry.
 
 ## Freshness and availability
 
-- **Update schedule** — how often and when the metric refreshes.
-- **Latency** — how far behind real time the data is.
-- **Where to find it** — dashboards and tools that expose the metric.
+- **Update schedule**: how often and when the metric refreshes.
+- **Latency**: how far behind real time the data is.
+- **Where to find it**: dashboards and tools that expose the metric.
 
 ## Caveats and known limitations
 
 An honest list of everything that can mislead a reader: definition
 changes over time, known data quality issues, edge cases. This
-section builds trust — never skip it.
+section builds trust, so never skip it.
 
 ## Changelog
 

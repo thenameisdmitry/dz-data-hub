@@ -14,40 +14,40 @@
 
 `fct_transactions` is the single source of truth for processed
 financial transactions at DZ Software. One row represents one
-transaction that finished its journey through the ingestion pipeline —
+transaction that finished its journey through the ingestion pipeline,
 successfully or not. All processing metrics, including
 [STP Rate](STP-Rate.md) and
 [Processing Latency](Processing-Latency.md), are built on this table.
 
 ## Schema
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `transaction_id` | `VARCHAR` | Unique transaction identifier assigned at ingestion (primary key) |
-| `source_system` | `VARCHAR` | Where the record came from: `core_banking`, `payment_gateway`, `custodian`, `test` |
-| `source_ref` | `VARCHAR` | Original identifier in the source system; unique only within one source |
-| `account_id` | `VARCHAR` | Account the transaction belongs to; joins to `dim_accounts` |
-| `payee_id` | `VARCHAR` | Counterparty; joins to `dim_payees`. `NULL` where no counterparty applies (e.g. fees) |
-| `transaction_type` | `VARCHAR` | Business type: `payment`, `trade`, `fee`, `transfer` |
-| `amount` | `NUMBER(18,2)` | Transaction amount in the original currency |
-| `currency` | `VARCHAR(3)` | ISO 4217 currency code: `EUR`, `USD`, `RSD` |
-| `booking_date` | `DATE` | Business date the transaction belongs to |
-| `processing_status` | `VARCHAR` | Pipeline outcome: `auto`, `manual`, `rejected`, `pending` — see [Processing statuses](#statuses) |
-| `ingested_at` | `TIMESTAMP_NTZ` | When the record arrived from the source system, UTC |
-| `loaded_at` | `TIMESTAMP_NTZ` | When the record became queryable in the warehouse, UTC |
+| Column | Type | Description                                                                                      |
+|--------|------|--------------------------------------------------------------------------------------------------|
+| `transaction_id` | `VARCHAR` | Unique transaction identifier assigned at ingestion (primary key)                                |
+| `source_system` | `VARCHAR` | Where the record came from: `core_banking`, `payment_gateway`, `custodian`, `test`               |
+| `source_ref` | `VARCHAR` | Original identifier in the source system; unique only within one source                          |
+| `account_id` | `VARCHAR` | Account the transaction belongs to; joins to `dim_accounts`                                      |
+| `payee_id` | `VARCHAR` | Counterparty; joins to `dim_payees`. `NULL` where no counterparty applies (e.g. fees)            |
+| `transaction_type` | `VARCHAR` | Business type: `payment`, `trade`, `fee`, `transfer`                                             |
+| `amount` | `NUMBER(18,2)` | Transaction amount in the original currency                                                      |
+| `currency` | `VARCHAR(3)` | ISO 4217 currency code: `EUR`, `USD`, `RSD`                                                      |
+| `booking_date` | `DATE` | Business date the transaction belongs to                                                         |
+| `processing_status` | `VARCHAR` | Pipeline outcome: `auto`, `manual`, `rejected`, `pending` (see [Processing statuses](#statuses)) |
+| `ingested_at` | `TIMESTAMP_NTZ` | When the record arrived from the source system, UTC                                              |
+| `loaded_at` | `TIMESTAMP_NTZ` | When the record became queryable in the database, UTC                                            |
 
 ## Processing statuses {id="statuses"}
 
-| Status | Meaning | In STP Rate | In Latency |
-|--------|---------|-------------|------------|
-| `auto` | Processed straight through, no human involvement | Yes — numerator | Yes |
-| `manual` | Resolved by an operator (unmatched account, failed enrichment) | Yes — denominator only | Yes |
-| `rejected` | Failed validation terminally; kept for audit | Yes — denominator only | No |
-| `pending` | Still in the review queue | No | No |
+| Status | Meaning | In STP Rate           | In Latency |
+|--------|---------|-----------------------|------------|
+| `auto` | Processed straight through, no human involvement | Yes: numerator        | Yes |
+| `manual` | Resolved by an operator (unmatched account, failed enrichment) | Yes: denominator only | Yes |
+| `rejected` | Failed validation terminally; kept for audit | Yes: denominator only | No |
+| `pending` | Still in the review queue | No                    | No |
 
 > `pending` is a transient status: every pending transaction
 > eventually becomes `auto`, `manual`, or `rejected`. Recent
-> aggregates shift as the queue drains — both metric pages carry
+> aggregates shift as the queue drains: both metric pages carry
 > a caveat about this.
 > {style="note"}
 
@@ -57,7 +57,7 @@ successfully or not. All processing metrics, including
   systems (core banking, payment gateway, custodian feeds). The
   validation engine checks format, enriches records, deduplicates
   re-sent files, matches accounts, and assigns `processing_status`.
-  The daily warehouse job then loads resolved and pending records
+  The daily database job then loads resolved and pending records
   into this table.
 - **Downstream.** Metrics [STP Rate](STP-Rate.md) and
   [Processing Latency](Processing-Latency.md); Metabase dashboards
@@ -65,8 +65,7 @@ successfully or not. All processing metrics, including
   extracts.
 - **Related dimensions.** `dim_accounts` (account attributes,
   client tier), `dim_payees` (counterparty reference data). Account
-  and payee attributes are **not** stored on this table — join the
-  dimensions instead.
+  and payee attributes are **not** stored within this table.
 
 ## Freshness
 
